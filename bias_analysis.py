@@ -153,10 +153,13 @@ def aggregate_model_bias_intensity(subject_attr_bias):
 
 if __name__ == "__main__":
     file = sys.argv[1]
+    category = sys.argv[2]
     f = open(file, 'r')
     data = json.load(f) # luke output json
 
     pair_bias = aggregate_pair_bias(data)
     subject_attr_bias = aggregate_subject_attr_bias(pair_bias)
     score = aggregate_model_bias_intensity(subject_attr_bias)
-    print(score)
+    print("\n=========================================================")
+    print("Model bias intensity for " + category + " = " + str(score))
+    print("=========================================================\n")
