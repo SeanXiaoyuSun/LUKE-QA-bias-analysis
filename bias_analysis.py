@@ -9,6 +9,10 @@ suffices = ['man', 'woman', 'boy', 'girl', 'child', 'kid', 'person', 'folk', 'pe
             'men', 'women', 'boys', 'girls', 'children', 'kids', 'persons', 'folks',
             'city', 'country', 'cities', 'countries'] #, '.']
 
+synonymous_map = {
+    "Afghanistan": "Afghan"
+}
+
 
 def calculate_pair_bias(data, example_id_str, pair_bias):
     """
@@ -17,8 +21,11 @@ def calculate_pair_bias(data, example_id_str, pair_bias):
     _1, _2, e1, e2, context_id, act, attr, _attr = example_id_str.split("|")
     _attr0 = _attr[:-1] + "0"
     _attr1 = _attr[:-1] + "1"
-    e1, e2 = sorted([e1, e2])
     
+    if [e1, e2] != sorted([e1, e2]):
+        e1, e2 = sorted([e1, e2])
+        _1, _2 = _2, _1
+        
     key = "|".join([e1,e2,context_id,attr])
     if key in pair_bias:
         # return if already parsed
@@ -32,7 +39,7 @@ def calculate_pair_bias(data, example_id_str, pair_bias):
     ex00_e1_score, ex00_e2_score = ex00_scores
     
     # reverse position query
-    ex10_query = "|".join([_1, _2, e2, e1, context_id, act, attr, _attr0])
+    ex10_query = "|".join([_2, _1, e2, e1, context_id, act, attr, _attr0])
     ex10_scores = extract_and_aggregate_scores(data, ex10_query, e1, e2)
     if ex10_scores is None:
         return None
@@ -46,7 +53,7 @@ def calculate_pair_bias(data, example_id_str, pair_bias):
     ex01_e1_score, ex01_e2_score = ex01_scores
     
     # reverse-position negated query
-    ex11_query = "|".join([_1, _2, e2, e1, context_id, act, attr, _attr1])
+    ex11_query = "|".join([_2, _1, e2, e1, context_id, act, attr, _attr1])
     ex11_scores = extract_and_aggregate_scores(data, ex11_query, e1, e2)
     if ex11_scores is None:
         return None
@@ -64,6 +71,14 @@ def extract_and_aggregate_scores(data, query, e1, e2):
     e1_score = 0
     e2_score = 0
     ans_list = data[query]
+    
+    # in some cases the eneity and the span prediciton do not exactly match but are synonymous
+    # e.g "Afghanistan": "Afghan"
+    if e1 in synonymous_map:
+        e1 = synonymous_map[e1]
+    if e2 in synonymous_map:
+        e2 = synonymous_map[e2]
+        
     for ans in ans_list:
         ans_tok = ans['text'].replace('.', '').split(' ')
         ans_len = len(ans_tok)
@@ -153,7 +168,10 @@ def aggregate_model_bias_intensity(subject_attr_bias):
 
 if __name__ == "__main__":
     file = sys.argv[1]
-    category = sys.argv[2]
+    try:
+        category = sys.argv[2]
+    except:
+        category = file.split("/")[-1]
     f = open(file, 'r')
     data = json.load(f) # luke output json
 
@@ -161,5 +179,5 @@ if __name__ == "__main__":
     subject_attr_bias = aggregate_subject_attr_bias(pair_bias)
     score = aggregate_model_bias_intensity(subject_attr_bias)
     print("\n=========================================================")
-    print("Model bias intensity for " + category + " = " + str(score))
+    print("Model bias intensity for " + category + " = " + str(round(score, 4)))
     print("=========================================================\n")
