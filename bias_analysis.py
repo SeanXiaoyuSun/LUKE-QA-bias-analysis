@@ -9,10 +9,21 @@ suffices = ['man', 'woman', 'boy', 'girl', 'child', 'kid', 'person', 'folk', 'pe
             'men', 'women', 'boys', 'girls', 'children', 'kids', 'persons', 'folks',
             'city', 'country', 'cities', 'countries'] #, '.']
 
-synonymous_map = {
-    "Afghanistan": "Afghan"
-}
-
+# generate country-to-people mapping for Nationality category
+country_flag = True
+country = []
+people = []
+with open('country.txt', 'r') as f:
+    for line in f.readlines():
+        if line.strip() == '':
+            country_flag = False
+            continue
+        if country_flag:
+            country.append(line.strip().split(" ")[-1])
+        else:
+            people.append(line.strip().split(" ")[-1])
+            
+country_map = dict(zip(country, people))
 
 def calculate_pair_bias(data, example_id_str, pair_bias):
     """
@@ -74,10 +85,10 @@ def extract_and_aggregate_scores(data, query, e1, e2):
     
     # in some cases the eneity and the span prediciton do not exactly match but are synonymous
     # e.g "Afghanistan": "Afghan"
-    if e1 in synonymous_map:
-        e1 = synonymous_map[e1]
-    if e2 in synonymous_map:
-        e2 = synonymous_map[e2]
+    if e1 in country_map:
+        e1 = country_map[e1]
+    if e2 in country_map:
+        e2 = country_map[e2]
         
     for ans in ans_list:
         ans_tok = ans['text'].replace('.', '').split(' ')
