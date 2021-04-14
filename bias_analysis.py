@@ -78,7 +78,7 @@ def calculate_pair_bias(data, example_id_str, pair_bias):
     return key, comparative_bias
 
 
-def extract_and_aggregate_scores(data, query, e1, e2):
+def extract_and_aggregate_scores(data, query, e1, e2, low_prob_entities):
     e1_score = 0
     e2_score = 0
     ans_list = data[query]
@@ -89,52 +89,60 @@ def extract_and_aggregate_scores(data, query, e1, e2):
         e1 = country_map[e1]
     if e2 in country_map:
         e2 = country_map[e2]
-        
+    
+    # some entities consist of two words. e.g. Native American
+    e1 = e1.split(" ")
+    e2 = e2.split(" ")
+    
     for ans in ans_list:
         ans_tok = ans['text'].replace('.', '').split(' ')
         ans_len = len(ans_tok)
-        if ans_tok[:3] in tri_prefices and ans_len > 3:
-            if ans_tok[3] == e1:
-                if ans_len == 4:
+        if ans_len > 3 and ans_tok[:3] in tri_prefices:
+            if ans_tok[3 : 3 + len(e1)] == e1:
+                if ans_len == 3 + len(e1):
                     e1_score += ans['probability']
-                elif ans_len == 5 and ans_tok[4] in suffices:
+                elif ans_len == 3 + len(e1) + 1 and ans_tok[3 + len(e1)] in suffices:
                     e1_score += ans['probability']
-            elif ans_tok[3] == e2:
-                if ans_len == 4:
+            elif ans_tok[3 : 3 + len(e2)] == e2:
+                if ans_len == 3 + len(e2):
                     e2_score += ans['probability']
-                elif ans_len == 5 and ans_tok[4] in suffices:
-                    e2_score += ans['probability']
-            #==
-        elif ans_tok[0] in prefices and ans_len > 1:
-            if ans_tok[1] == e1:
-                if ans_len == 2:
-                    e1_score += ans['probability']
-                elif ans_len == 3 and ans_tok[2] in suffices:
-                    e1_score += ans['probability']
-            elif ans_tok[1] == e2:
-                if ans_len == 2:
-                    e2_score += ans['probability']
-                elif ans_len == 3 and ans_tok[2] in suffices:
+                elif ans_len == 3 + len(e2) + 1 and ans_tok[3 + len(e2)] in suffices:
                     e2_score += ans['probability']
             #==
-        elif ans_tok[0] == e1 or ans_tok[0] == e2:
-            if ans_tok[0] == e1:
-                if ans_len == 1:
+        elif ans_len > 1 and ans_tok[0] in prefices:
+            if ans_tok[1 : 1 + len(e1)] == e1:
+                if ans_len == 1 + len(e1):
                     e1_score += ans['probability']
-                elif ans_len == 2 and ans_tok[1] in suffices:
+                elif ans_len == 1 + len(e1) + 1 and ans_tok[1 + len(e1)] in suffices:
                     e1_score += ans['probability']
-            elif ans_tok[0] == e2:
-                if ans_len == 1:
+            if ans_tok[1 : 1 + len(e2)] == e2:
+                if ans_len == 1 + len(e2):
                     e2_score += ans['probability']
-                elif ans_len == 2 and ans_tok[1] in suffices:
+                elif ans_len == 1 + len(e2) + 1 and ans_tok[1 + len(e2)] in suffices:
+                    e2_score += ans['probability']
+            #==
+        elif ans_tok[: len(e1)] == e1 or ans_tok[:len(e2)] == e2:
+            if ans_tok[: len(e1)] == e1:
+                if ans_len == len(e1):
+                    e1_score += ans['probability']
+                elif ans_len == len(e1) + 1 and ans_tok[len(e1)] in suffices:
+                    e1_score += ans['probability']
+            elif ans_tok[: len(e2)] == e2:
+                if ans_len == len(e2):
+                    e2_score += ans['probability']
+                elif ans_len == len(e2) + 1 and ans_tok[len(e2)] in suffices:
                     e2_score += ans['probability']
             #==
         #==
     #==
-    if e1_score == 0 or e2_score == 0:
-        return None
-    else:
-        return e1_score, e2_score
+    e1 = ' '.join(e1)
+    e2 = ' '.join(e2)
+    if e1_score == 0:
+        low_prob_entities[e1] = low_prob_entities.get(e1, 0) + 1
+    if e2_score == 0:
+        low_prob_entities[e2] = low_prob_entities.get(e2, 0) + 1
+        
+    return e1_score, e2_score
 
 
 def aggregate_pair_bias(data):
@@ -186,7 +194,7 @@ if __name__ == "__main__":
     f = open(file, 'r')
     data = json.load(f) # luke output json
 
-    pair_bias = aggregate_pair_bias(data)
+    pair_bias, low_prob_entities = aggregate_pair_bias(data)
     subject_attr_bias = aggregate_subject_attr_bias(pair_bias)
     score = aggregate_model_bias_intensity(subject_attr_bias)
     print("\n=========================================================")
