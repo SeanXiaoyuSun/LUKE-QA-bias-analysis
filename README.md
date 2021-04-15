@@ -65,7 +65,7 @@ To change the different groups of undespecific questions you want to predict, us
 
 `--unqover-file=N`: use nationality dataset
 
-The final output will be stored in  `output` directory with the name: `nbest_predictions_$groupname_.json` and `predictions_.json`
+The final output will be stored in  `output` directory with the name: `nbest_predictions_$groupname_.json` and `predictions_$groupname_.json`
 
 ** It takes about 10-20 minitues for the model to generate the output file on the AWS g4dn 2xlarge machine. 
 
