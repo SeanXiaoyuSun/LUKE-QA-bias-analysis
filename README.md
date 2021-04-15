@@ -27,7 +27,9 @@ Run the following command for finetunning on SQuAD 1.1 dataset (we use the same 
     --train-batch-size=2 \
     --gradient-accumulation-steps=3 \
     --learning-rate=15e-6 \
-    --num-train-epochs=2```
+    --num-train-epochs=2
+```
+    
 The model's weight will generated under the `output` directory named `python_model.bin`, you could change the output directory by modifying the `--output-dir` command. 
 
 For training, we used the AWS p3.2xlarge and it takes about 8 hours to train with the exact provided setting.
@@ -38,7 +40,8 @@ To reproducing the paper results using the weight we have trained, run the follo
     --model-file=luke_large_500k.tar.gz \
     --output-dir=output reading-comprehension run \
     --checkpoint-file=pytorch_model_reproduce.bin \
-    --no-train --no-negative```
+    --no-train --no-negative
+```
 The beam search results, output predictions, and scores will be stored in `output` directory with the name of `nbest_predictions_.json`, `predictions_.json`, `results.json`
 
 If you want to use the weights trained by the paper itself, then you could download the file [here](https://drive.google.com/file/d/1097QicHAVnroVVw54niPXoY-iylGNi0K/view?usp=sharing)(compressed) and replace the `--checkpoint-file` with the new file path.
@@ -49,7 +52,8 @@ Run the following command to generate the prediction and beam search result for 
     --model-file=luke_large_500k.tar.gz \
     --output-dir=output reading-comprehension run \
     --checkpoint-file=pytorch_model_reproduce.bin \
-    --no-train --no-negative --do-unqover --unqover-file=R```
+    --no-train --no-negative --do-unqover --unqover-file=R
+```
 To change the different groups of undespecific questions you want to predict, using the `--unqover-file` command.
 `--unqover-file=R`: use religions dataset
 `--unqover-file=E`: use ethnicity dataset
