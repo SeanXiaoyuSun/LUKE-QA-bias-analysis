@@ -15,7 +15,8 @@ To produce the result as in `output/result.json`, you should follow the instruct
 
 ## Fintunning Model
 Run the following command for finetunning on SQuAD 1.1 dataset (we use the same command as the original paper for fine tunning):
-```python3 -m examples.cli \
+```
+    python3 -m examples.cli \
     --num-gpus=1 \
     --model-file=luke_large_500k.tar.gz \
     --output-dir=output \
@@ -37,7 +38,8 @@ For training, we used the AWS p3.2xlarge and it takes about 8 hours to train wit
 
 ## Evaluate and Reproduce The Paper's Result
 To reproducing the paper results using the weight we have trained, run the following command:
-```python3 -m examples.cli \
+```
+    python3 -m examples.cli \
     --model-file=luke_large_500k.tar.gz \
     --output-dir=output reading-comprehension run \
     --checkpoint-file=pytorch_model_reproduce.bin \
@@ -49,7 +51,8 @@ If you want to use the weights trained by the paper itself, then you could downl
 
 ## Generate output
 Run the following command to generate the prediction and beam search result for four groups of undespecific questions:
-```python3 -m examples.cli \
+```
+    python3 -m examples.cli \
     --model-file=luke_large_500k.tar.gz \
     --output-dir=output reading-comprehension run \
     --checkpoint-file=pytorch_model_reproduce.bin \
