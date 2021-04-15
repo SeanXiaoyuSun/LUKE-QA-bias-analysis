@@ -8,6 +8,7 @@ To produce the result as in `output/result.json`, you should follow the instruct
 2. Down load the LUKE pretrained model and entity data from [google drive](https://drive.google.com/drive/folders/1Gu9BI9w6twOT70Ha2uULuhobaBO21nKy?usp=sharing) using CMU account and store them under the main directory `LUKE-QA-bias-analysis`.
 
 3. Download the model checkpoints at [google drive](https://drive.google.com/drive/folders/1KTxIjnaLpD5m_23QCsaWxiUSAwxoDZ_U?usp=sharing) using CMU account and store them under the main directory `LUKE-QA-bias-analysis`.
+
 ** The file python_model_reproduce.bin should also be downloaded if you only want to train the model by yourself instead of loading the weight (Since the code will check the existence of the files even not using them)
 
 4. Install all required packages using `pip3 install -r requirements.txt`, and pytorch version should be 1.2.0 and CUDA version should be 10
@@ -56,10 +57,15 @@ Run the following command to generate the prediction and beam search result for 
 ```
 To change the different groups of undespecific questions you want to predict, using the `--unqover-file` command.
 `--unqover-file=R`: use religions dataset
+
 `--unqover-file=E`: use ethnicity dataset
+
 `--unqover-file=G`: use gender dataset
+
 `--unqover-file=N`: use nationality dataset
+
 The final output will be stored in  `output` directory with the name: `nbest_predictions_$groupname_.json` and `predictions_.json`
+
 ** It takes about 10-20 minitues for the model to generate the output file on the AWS g4dn 2xlarge machine. 
 
 ## Get the Data Directly for Bias Analysis
