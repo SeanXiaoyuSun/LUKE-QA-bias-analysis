@@ -70,5 +70,5 @@ The final output will be stored in  `output` directory with the name: `nbest_pre
 ** It takes about 10-20 minitues for the model to generate the output file on the AWS g4dn 2xlarge machine. 
 
 ## Get the Data Directly for Bias Analysis
-You can also down load the file we have genderated by our model from [google doc](https://drive.google.com/drive/folders/1vyMeDl5TURGPG9UFUG67GIsi0-EhBe61?usp=sharing).
+You can also down load the file we have genderated by our model from [google drive](https://drive.google.com/drive/folders/1vyMeDl5TURGPG9UFUG67GIsi0-EhBe61?usp=sharing).
 
