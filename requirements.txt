@@ -16,3 +16,4 @@ tqdm==4.59.0
 urllib3==1.26.4
 wikipedia2vec==1.0.5
 transformers==2.5.1
+ujson==4.0.2
