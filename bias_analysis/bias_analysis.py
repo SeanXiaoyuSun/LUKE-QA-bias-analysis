@@ -25,7 +25,7 @@ with open('country.txt', 'r') as f:
             
 country_map = dict(zip(country, people))
 
-def calculate_pair_bias(data, example_id_str, pair_bias):
+def calculate_pair_bias(data, example_id_str, pair_bias, low_prob_entities):
     """
     example_id_str: template string
     """
@@ -44,28 +44,28 @@ def calculate_pair_bias(data, example_id_str, pair_bias):
     
     # base query
     ex00_query= "|".join([_1, _2, e1, e2, context_id, act, attr, _attr0])
-    ex00_scores = extract_and_aggregate_scores(data, ex00_query, e1, e2)
+    ex00_scores = extract_and_aggregate_scores(data, ex00_query, e1, e2, low_prob_entities)
     if ex00_scores is None:
         return None
     ex00_e1_score, ex00_e2_score = ex00_scores
     
     # reverse position query
     ex10_query = "|".join([_2, _1, e2, e1, context_id, act, attr, _attr0])
-    ex10_scores = extract_and_aggregate_scores(data, ex10_query, e1, e2)
+    ex10_scores = extract_and_aggregate_scores(data, ex10_query, e1, e2, low_prob_entities)
     if ex10_scores is None:
         return None
     ex10_e1_score, ex10_e2_score = ex10_scores
     
     # negated query
     ex01_query = "|".join([_1, _2, e1, e2, context_id, act, attr, _attr1])
-    ex01_scores = extract_and_aggregate_scores(data, ex01_query, e1, e2)
+    ex01_scores = extract_and_aggregate_scores(data, ex01_query, e1, e2, low_prob_entities)
     if ex01_scores is None:
         return None
     ex01_e1_score, ex01_e2_score = ex01_scores
     
     # reverse-position negated query
     ex11_query = "|".join([_2, _1, e2, e1, context_id, act, attr, _attr1])
-    ex11_scores = extract_and_aggregate_scores(data, ex11_query, e1, e2)
+    ex11_scores = extract_and_aggregate_scores(data, ex11_query, e1, e2, low_prob_entities)
     if ex11_scores is None:
         return None
     ex11_e1_score, ex11_e2_score = ex11_scores
@@ -108,7 +108,7 @@ def extract_and_aggregate_scores(data, query, e1, e2, low_prob_entities):
                     e2_score += ans['probability']
                 elif ans_len == 3 + len(e2) + 1 and ans_tok[3 + len(e2)] in suffices:
                     e2_score += ans['probability']
-            #==
+            # --
         elif ans_len > 1 and ans_tok[0] in prefices:
             if ans_tok[1 : 1 + len(e1)] == e1:
                 if ans_len == 1 + len(e1):
@@ -120,7 +120,7 @@ def extract_and_aggregate_scores(data, query, e1, e2, low_prob_entities):
                     e2_score += ans['probability']
                 elif ans_len == 1 + len(e2) + 1 and ans_tok[1 + len(e2)] in suffices:
                     e2_score += ans['probability']
-            #==
+            # --
         elif ans_tok[: len(e1)] == e1 or ans_tok[:len(e2)] == e2:
             if ans_tok[: len(e1)] == e1:
                 if ans_len == len(e1):
@@ -132,9 +132,9 @@ def extract_and_aggregate_scores(data, query, e1, e2, low_prob_entities):
                     e2_score += ans['probability']
                 elif ans_len == len(e2) + 1 and ans_tok[len(e2)] in suffices:
                     e2_score += ans['probability']
-            #==
-        #==
-    #==
+            # --
+        # --
+    # --
     e1 = ' '.join(e1)
     e2 = ' '.join(e2)
     if e1_score == 0:
@@ -147,16 +147,21 @@ def extract_and_aggregate_scores(data, query, e1, e2, low_prob_entities):
 
 def aggregate_pair_bias(data):
     pair_bias = dict()
+    
+    # record entities that cannot be found from top 40 predicitons. 
+    # Use this is analyze the possible distribution shift with in entites
+    low_prob_entities = dict()
+    
     for s in list(data.keys()):
-        out = calculate_pair_bias(data, s, pair_bias)
+        out = calculate_pair_bias(data, s, pair_bias, low_prob_entities)
         if out is not None:
             key, comparative_bias = out
             pair_bias[key] = comparative_bias
-        #==
-    #==
-    return pair_bias
-
-            
+        # --
+    # --
+    return pair_bias, low_prob_entities
+           
+ 
 def aggregate_subject_attr_bias(pair_bias):
     subject_attr_bias = dict()
     subject_attr_bias_len = dict()  # keep track of each subject_attr pair length for get average
@@ -169,7 +174,7 @@ def aggregate_subject_attr_bias(pair_bias):
         subject_attr_bias[e2_key] = subject_attr_bias.get(e2_key, 0) + e2_score
         subject_attr_bias_len[e1_key] = subject_attr_bias_len.get(e1_key, 0) + 1
         subject_attr_bias_len[e2_key] = subject_attr_bias_len.get(e2_key, 0) + 1
-    #==
+    # --
     for key, val in subject_attr_bias.items():
         subject_attr_bias[key] /= subject_attr_bias_len[key]
     return subject_attr_bias
