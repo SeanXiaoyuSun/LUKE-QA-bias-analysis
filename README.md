@@ -31,7 +31,7 @@ Run the following command for finetunning on SQuAD 1.1 dataset (we use the same 
     --learning-rate=15e-6 \
     --num-train-epochs=2
 ```
-    
+
 The model's weight will be generated under the `output` directory named `python_model.bin`, you could change the output directory by modifying the `--output-dir` command. 
 
 For training, we used the AWS p3.2xlarge instance (contains a single V100 GPU) and it takes about 8 hours to train with the exact provided setting.
@@ -79,7 +79,19 @@ Bias result reproduction:
 ```
 python3 ./bias_analysis/bias_analysis.py <predcitions file> <(OPTIONAL) Category>
 ```
-If you use predictions from other models, please make sure the output format is consistent with provided predictions files in our google drive.
+(If you use predictions from other models, please make sure the output format is consistent with provided predictions files in our google drive)
+
+Sample output:
+
+```shell
+> python3 bias_analysis.py nbest_predictions_Gender_.json Gender
+
+=========================================================
+Model bias intensity for Gender = 0.833
+=========================================================
+```
+
+
 
 Or, you can use the .ipynb interactive notebook and follow the instructions to conduct bias analysis.
 
@@ -87,7 +99,7 @@ Or, you can use the .ipynb interactive notebook and follow the instructions to c
 By finetuning the model on SQuAD results, we are able to generate the following F1 and exact match scores: 
 
    LUKE (reported) Exact Match 89.8 F1 95.0
-   
+
    LUKE (reproduced) Exact Match 89.7 F1 94.9
-   
+
 The reproduced result is of minor differences compared to the reported exact match and F1 scores reported in the paper. 
