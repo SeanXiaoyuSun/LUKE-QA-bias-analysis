@@ -178,7 +178,7 @@ To evaluate on squad dataset, you can run the following command:
 ```
 The beam search results, output predictions, and scores will be stored in the `output` directory with the name of `nbest_predictions_.json`, `predictions_.json`, `results.json`
 
-## Generate the bais prediction result
+## Generate the bias prediction result
 For bias evaluation, you should run the following command after finetuning the model:
 ```
     python3 -m examples.cli \
@@ -196,3 +196,11 @@ The final output will be stored in the `output` directory with the name: `nbest_
 The debias model performance can be found in file `debias_output/results.json`, where you could see the F1 score and exact match. The orginal LUKE's result is in file `output/results.json`.
 
 The beam search results for gender bias evaluation can be downloaded from this [link](https://drive.google.com/file/d/1TtuQ2Mj_SgsTNuHOreB2LsKjKhfe8fqL/view?usp=sharing), which can be used for calculating the bias score.
+
+Our debiased results are summarized in the follow table:
+| Model | F1 Score |  Exact Match | Gender Bias Score |
+| ---------------------------------- | ------------- | ------------ | ---- |
+| Original LUKE | 0.949 | 0.898 | 0.833 |
+| Finetune after debiasing (1 epoch) | 0.947 | 0.892 | 0.532 |
+| Finetune after debiasing (2 epoch) | 0.945 | 0.890 | 0.753 |
+
