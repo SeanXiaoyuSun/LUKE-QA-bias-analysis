@@ -113,7 +113,7 @@ The debias model can be found under the folder `examples/debias_model`. The `mod
 The setup requirements are the same as in the previous section.
 
 ## Pretrain Instruction
-The pretrianing gender debias data can be download here[] in the name of `debias_dev.json` and `train_dev.json`. These files should put under the folder `examples/debias_model/data`.
+The pretrianing gender debias data can be download [here](https://drive.google.com/file/d/1U_2pAoHN9AScgCgypPZhzpG_uAnsnYUX/view?usp=sharing) in the name of `debias_dev.json` and `train_dev.json`. These files should put under the folder `examples/debias_model/data`.
 
 Other pretraining data can also download using the same link with the name of: `eth_<dev/train>.json`,`nation_<dev/train>.json`,`religion_<dev/train>.json`.
 In order to use these datasets, you should change the name to `debias_<dev/train>.json` or change the data path in file `examples/reading_comprehension/utils/dataset.py` under the class `debiasProcessor()`. 
@@ -143,7 +143,7 @@ If you would like to change the training parameters, the arguments are:
 ## Pretrained Output
 The pretrained output file will be stored under the same directory `examples/debias_model/`, you should move it to `LUKE/` with the same name before fine tuning.
 
-From this link[], we provide the model weight that we have already trained, and you could put it under the `LUKE/` directory before fine tuning.
+From this [link](https://drive.google.com/file/d/1UQS1GXoJ5JOUuPILw7v1uSTC3Okfmj3b/view?usp=sharing), we provide the model weight that we have already trained, and you could put it under the `LUKE/` directory before fine tuning.
 
 
 ## Fine tunning
@@ -190,3 +190,9 @@ For bias evaluation, you should run the following command after finetuning the m
 The final output will be stored in the `output` directory with the name: `nbest_predictions_Gender_.json` and `predictions_Gender_.json`
 
 ** If you would like to evaluate the pretrained models for other bias, you could change the argument `--unqover-file` as the same as in the previous section.
+
+## Result
+
+The debias model performance can be found in file `debias_output/results.json`, where you could see the F1 score and exact match. The orginal LUKE's result is in file `output/results.json`.
+
+The beam search results for gender bias evaluation can be downloaded from this [link](https://drive.google.com/file/d/1TtuQ2Mj_SgsTNuHOreB2LsKjKhfe8fqL/view?usp=sharing), which can be used for calculating the bias score.
