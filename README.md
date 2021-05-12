@@ -113,7 +113,7 @@ The debias model can be found under the folder `examples/debias_model`. The `mod
 The setup requirements are the same as in the previous section.
 
 ## Pretrain Instruction
-The pretrianing gender debias data can be download [here](https://drive.google.com/file/d/1U_2pAoHN9AScgCgypPZhzpG_uAnsnYUX/view?usp=sharing) in the name of `debias_dev.json` and `train_dev.json`. These files should put under the folder `examples/debias_model/data`.
+The pretrianing gender debias data can be download [here](https://drive.google.com/drive/folders/1YqdU2IKEvUc9PonfSel8pPTOvoWxZHtH?usp=sharing) in the name of `debias_dev.json` and `train_dev.json`. These files should put under the folder `examples/debias_model/data`.
 
 Other pretraining data can also download using the same link with the name of: `eth_<dev/train>.json`,`nation_<dev/train>.json`,`religion_<dev/train>.json`.
 In order to use these datasets, you should change the name to `debias_<dev/train>.json` or change the data path in file `examples/reading_comprehension/utils/dataset.py` under the class `debiasProcessor()`. 
