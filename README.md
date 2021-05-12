@@ -102,4 +102,13 @@ By finetuning the model on SQuAD results, we are able to generate the following 
 
    LUKE (reproduced) Exact Match 89.7 F1 94.9
 
-The reproduced result is of minor differences compared to the reported exact match and F1 scores reported in the paper. 
+The reproduced result is of minor differences compared to the reported exact match and F1 scores reported in the paper.
+
+
+
+# LUKE-Debias-Result
+
+The debias nodel can be found in under the folder `examples/debias_model`. The `model.py` file contians the pretrain debias model adapted from RoBERTa, and the file `luke_debias_model.py` are model with residual connection and only adapt from LUKE.
+
+## Pretrain Instruction
+The pretrianing data can be found in t
