@@ -143,7 +143,7 @@ If you would like to change the training parameters, the arguments are:
 ## Pretrained Output
 The pretrained output file will be stored under the same directory `examples/debias_model/`, you should move it to `LUKE/` with the same name before fine tuning.
 
-From this [link](https://drive.google.com/file/d/1UQS1GXoJ5JOUuPILw7v1uSTC3Okfmj3b/view?usp=sharing), we provide the model weight that we have already trained, and you could put it under the `LUKE/` directory before fine tuning.
+From this [link](https://drive.google.com/drive/folders/1YqdU2IKEvUc9PonfSel8pPTOvoWxZHtH?usp=sharing), we provide the model weight that we have already trained, and you could put it under the `LUKE/` directory before fine tuning.
 
 
 ## Fine tunning
