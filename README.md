@@ -108,7 +108,42 @@ The reproduced result is of minor differences compared to the reported exact mat
 
 # LUKE-Debias-Result
 
-The debias nodel can be found in under the folder `examples/debias_model`. The `model.py` file contians the pretrain debias model adapted from RoBERTa, and the file `luke_debias_model.py` are model with residual connection and only adapt from LUKE.
+The debias nodel can be found in under the folder `examples/debias_model`. The `model.py` file contians the pretrain debias model adapted from RoBERTa, and the file `luke_debias_model.py` are model with residual connection and only adapt from LUKE. 
+
+The setup requirments are the same as the previous section.
 
 ## Pretrain Instruction
-The pretrianing data can be found in t
+The pretrianing gender debias data can be download here[] in the name of `debias_dev.json` and `train_dev.json`. These files should put under the foler `examples/debias_model/data`.
+
+Other pretraining data can also download using the same link with the name of: `eth_<dev/train>.json`,`nation_<dev/train>.json`,`religion_<dev/train>.json`.
+In order to use these dataset, you should change the name to `debias_<dev/train>.json` or change the data path in file `examples/reading_comprehension/utils/dataset.py` under the class `debiasProcessor()`. 
+
+For changing the model parameters, you could edit the file `examples/debias_model/config.py`.
+
+Due to the computation limitation, in our experiments, we only have time train the gender debias model. The pretraining process takes takes overnight on aws AWS g4dn 2xlarge machine.
+
+The command line for pretraining (make sure you are under the directory of `example/debias_model/`): 
+
+```
+    python3 train.py
+
+```
+If you would like to change the trainig parameters, the arguments are:
+```
+    python3 train.py \
+    --batch_size 80 \
+    --epochs5 \
+    --lr 1e-3 \
+    --cuda 0
+
+```
+** cuda is the index of the cuda device, if cuda<0 means only use CPU
+
+
+## Pretrained Output
+The pretrained output file will be stored under the same directory `examples/debias_model/`, you should move it to `LUKE/` with the same name before fine tunning.
+
+From this link[], we provide the model weight that we have already trained, and you could put it under the `LUKE/` directory before fine tunning.
+
+
+ 
