@@ -108,19 +108,19 @@ The reproduced result is of minor differences compared to the reported exact mat
 
 # LUKE-Debias-Result
 
-The debias nodel can be found in under the folder `examples/debias_model`. The `model.py` file contians the pretrain debias model adapted from RoBERTa, and the file `luke_debias_model.py` are model with residual connection and only adapt from LUKE. 
+The debias model can be found under the folder `examples/debias_model`. The `model.py` file contains the pretrain debias model adapted from RoBERTa, and the file `luke_debias_model.py` is the model with residual connection and only adapt from LUKE. 
 
-The setup requirments are the same as the previous section.
+The setup requirements are the same as in the previous section.
 
 ## Pretrain Instruction
-The pretrianing gender debias data can be download here[] in the name of `debias_dev.json` and `train_dev.json`. These files should put under the foler `examples/debias_model/data`.
+The pretrianing gender debias data can be download here[] in the name of `debias_dev.json` and `train_dev.json`. These files should put under the folder `examples/debias_model/data`.
 
 Other pretraining data can also download using the same link with the name of: `eth_<dev/train>.json`,`nation_<dev/train>.json`,`religion_<dev/train>.json`.
-In order to use these dataset, you should change the name to `debias_<dev/train>.json` or change the data path in file `examples/reading_comprehension/utils/dataset.py` under the class `debiasProcessor()`. 
+In order to use these datasets, you should change the name to `debias_<dev/train>.json` or change the data path in file `examples/reading_comprehension/utils/dataset.py` under the class `debiasProcessor()`. 
 
 For changing the model parameters, you could edit the file `examples/debias_model/config.py`.
 
-Due to the computation limitation, in our experiments, we only have time train the gender debias model. The pretraining process takes takes overnight on aws AWS g4dn 2xlarge machine.
+Due to the computation limitation, in our experiments, we only have time to train the gender debias model. The pretraining process takes overnight on AWS g4dn 2xlarge machine.
 
 The command line for pretraining (make sure you are under the directory of `example/debias_model/`): 
 
@@ -128,7 +128,7 @@ The command line for pretraining (make sure you are under the directory of `exam
     python3 train.py
 
 ```
-If you would like to change the trainig parameters, the arguments are:
+If you would like to change the training parameters, the arguments are:
 ```
     python3 train.py \
     --batch_size 80 \
@@ -137,13 +137,56 @@ If you would like to change the trainig parameters, the arguments are:
     --cuda 0
 
 ```
-** cuda is the index of the cuda device, if cuda<0 means only use CPU
+** CUDA is the index of the CUDA device, if cuda<0 means only use CPU
 
 
 ## Pretrained Output
-The pretrained output file will be stored under the same directory `examples/debias_model/`, you should move it to `LUKE/` with the same name before fine tunning.
+The pretrained output file will be stored under the same directory `examples/debias_model/`, you should move it to `LUKE/` with the same name before fine tuning.
 
-From this link[], we provide the model weight that we have already trained, and you could put it under the `LUKE/` directory before fine tunning.
+From this link[], we provide the model weight that we have already trained, and you could put it under the `LUKE/` directory before fine tuning.
 
 
 ## Fine tunning
+
+For fine-tuning you could directly run the command:
+
+```
+    python3 -m examples.cli \
+    --num-gpus=1 \
+    --model-file=luke_large_500k.tar.gz \
+    --output-dir=output \
+    reading-comprehension run \
+    --data-dir=data \
+    --no-negative \
+    --wiki-link-db-file=enwiki_20160305.pkl \
+    --model-redirects-file=enwiki_20181220_redirects.pkl \
+    --link-redirects-file=enwiki_20160305_redirects.pkl \
+    --train-batch-size=1 \
+    --gradient-accumulation-steps=3 \
+    --learning-rate=15e-6 \
+    --num-train-epochs=2
+```
+Due to the computation limitation, we only use a batch size of 1. But if you have more computation resources, you could increase the batch size to run faster.
+## Evaluation on SQuAD dataset
+To evaluate on squad dataset, you can run the following command:
+```
+    python3 -m examples.cli \
+    --model-file=luke_large_500k.tar.gz \
+    --output-dir=output reading-comprehension run \
+    --checkpoint-file=pytorch_model_reproduce.bin \
+    --no-train --no-negative
+```
+The beam search results, output predictions, and scores will be stored in the `output` directory with the name of `nbest_predictions_.json`, `predictions_.json`, `results.json`
+
+## Generate the bais prediction result
+For bias evaluation, you should run the following command after finetuning the model:
+```
+    python3 -m examples.cli \
+    --model-file=luke_large_500k.tar.gz \
+    --output-dir=output reading-comprehension run \
+    --checkpoint-file=pytorch_model_reproduce.bin \
+    --no-train --no-negative --do-unqover --unqover-file=G
+```
+The final output will be stored in the `output` directory with the name: `nbest_predictions_Gender_.json` and `predictions_Gender_.json`
+
+** If you would like to evaluate the pretrained models for other bias, you could change the argument `--unqover-file` as the same as in the previous section.
