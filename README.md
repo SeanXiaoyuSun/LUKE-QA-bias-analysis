@@ -1,5 +1,5 @@
 # LUKE-QA-bias-analysis
-
+(Notice: The commitments on github do not reflect to the contribution of each team member)
 
 To produce the result as in `output/result.json`, you should follow the instructions step by step here:
 
